@@ -282,14 +282,14 @@ server <- function(input, output, session) {
       filter(species == "Nightjar", 
              type == "priority23",
              priority == "3") %>%
-      mutate(legend = factor(legend, levels = c("Strong loss of functionality", "Moderate loss of functionality")))
+      mutate(legend = factor(legend, levels = c("Strong loss of connectivity", "Moderate loss of connectivity")))
     
     
     df_functionality_map2_nightjar <- df_map_species %>%
       filter(species == "Nightjar", 
              type == "priority23",
              priority == "2") %>%
-      mutate(legend = factor(legend, levels = c("Strong loss of functionality", "Moderate loss of functionality")))
+      mutate(legend = factor(legend, levels = c("Strong loss of connectivity", "Moderate loss of connectivity")))
     
     
     pal3 <- colorFactor(c("#092e6a", "#3b97c8"), 
@@ -398,12 +398,12 @@ server <- function(input, output, session) {
       
       df_functionality_map3 <- df_map1() %>%
         filter(priority == "3") %>%
-        mutate(legend = factor(legend, levels = c("Strong loss of functionality", "Moderate loss of functionality")))
+        mutate(legend = factor(legend, levels = c("Strong loss of connectivity", "Moderate loss of connectivity")))
       
       
       df_functionality_map2 <- df_map1() %>%
         filter(priority == "2") %>%
-        mutate(legend = factor(legend, levels = c("Strong loss of functionality", "Moderate loss of functionality")))
+        mutate(legend = factor(legend, levels = c("Strong loss of connectivity", "Moderate loss of connectivity")))
       
       
       pal3 <- colorFactor(c("#092e6a", "#3b97c8"), 
@@ -542,7 +542,7 @@ server <- function(input, output, session) {
                           "<strong>%s</strong><br/>%s<br/>%s<br/>%s",
                           "Overall score", 
                           paste0(ifelse(df_map1()$priority %in% c("2"), "High ecological stakes without light pollution", "Moderate ecological stakes without light pollution")), 
-                          paste0(df_map1()$lose_functionality, " loss of functionality"),
+                          paste0(df_map1()$lose_functionality, " loss of connectivity"),
                           paste0(df_map1()$impacted_species, " impacted groups of species")
                         ) %>% lapply(htmltools::HTML), 
                         
@@ -550,7 +550,7 @@ server <- function(input, output, session) {
                           "<strong>%s</strong><br/>%s<br/>%s<br/>%s",
                           "Overall score", 
                           paste0(ifelse(df_map1()$priority %in% c("2"), "High ecological stakes without light pollution", "Moderate ecological stakes without light pollution")), 
-                          paste0(df_map1()$lose_functionality, " loss of functionality"),
+                          paste0(df_map1()$lose_functionality, " loss of connectivity"),
                           paste0(df_map1()$impacted_species, " impacted groups of species")
                         ) %>% lapply(htmltools::HTML))
       
@@ -697,7 +697,7 @@ server <- function(input, output, session) {
                          na.color = "white")
     
     labels <- sprintf(
-      "<strong>%s</strong><br/>Acceptation score : %g (%s)<br/>%s loss of functionality <br/> <strong>%s</strong> groups of impacted species",
+      "<strong>%s</strong><br/>Acceptation score : %g (%s)<br/>%s loss of connectivity <br/> <strong>%s</strong> groups of impacted species",
       paste0(bivariate_prio2[["LIBCOM"]], ", ", bivariate_prio2[["LIBIRIS"]]), 
       round(bivariate_prio2$wtp_extinction1, 1),
       bivariate_prio2$acceptabilite_extinction1,
@@ -777,7 +777,7 @@ server <- function(input, output, session) {
       
       labels <- switch(input$choix_indic_accept_synthese, 
                        "1" = sprintf(
-                         "<strong>%s</strong><br/>Acceptation score : %g (%s)<br/>%s loss of functionality <br/> <strong>%s</strong> groups of impacted species",
+                         "<strong>%s</strong><br/>Acceptation score : %g (%s)<br/>%s loss of connectivity <br/> <strong>%s</strong> groups of impacted species",
                          paste0(bivariate_prio2[["LIBCOM"]], ", ", bivariate_prio2[["LIBIRIS"]]), 
                          round(wtp, 1),
                          bivariate_prio2$acceptabilite_extinction1,
@@ -785,7 +785,7 @@ server <- function(input, output, session) {
                          bivariate_prio2$impacted_species
                        ) %>% lapply(htmltools::HTML), 
                        "2" = sprintf(
-                         "<strong>%s</strong><br/>Acceptation score : %g (%s)<br/>%s loss of functionality <br/> <strong>%s</strong> groups of impacted species",
+                         "<strong>%s</strong><br/>Acceptation score : %g (%s)<br/>%s loss of connectivity <br/> <strong>%s</strong> groups of impacted species",
                          paste0(bivariate_prio2[["LIBCOM"]], ", ", bivariate_prio2[["LIBIRIS"]]), 
                          round(wtp, 1),
                          bivariate_prio2$acceptabilite_extinction2,
@@ -860,7 +860,7 @@ server <- function(input, output, session) {
       
       labels <- switch(input$choix_indic_accept_synthese,
                       "1" = sprintf(
-                        "<strong>%s</strong><br/>Acceptation score : %g (%s)<br/>%s loss of functionality <br/> <strong>%s</strong> groups of impacted species",
+                        "<strong>%s</strong><br/>Acceptation score : %g (%s)<br/>%s loss of connectivity <br/> <strong>%s</strong> groups of impacted species",
                         paste0(bivariate_prio3[["LIBCOM"]], ", ", bivariate_prio3[["LIBIRIS"]]), 
                         round(wtp, 1),
                         bivariate_prio3$acceptabilite_extinction1,
@@ -868,7 +868,7 @@ server <- function(input, output, session) {
                         bivariate_prio3$impacted_species
                       ) %>% lapply(htmltools::HTML), 
                       "2" = sprintf(
-                        "<strong>%s</strong><br/>Acceptation score : %g (%s)<br/>%s loss of functionality <br/> <strong>%s</strong> groups of impacted species",
+                        "<strong>%s</strong><br/>Acceptation score : %g (%s)<br/>%s loss of connectivity <br/> <strong>%s</strong> groups of impacted species",
                         paste0(bivariate_prio3[["LIBCOM"]], ", ", bivariate_prio3[["LIBIRIS"]]), 
                         round(wtp, 1),
                         bivariate_prio3$acceptabilite_extinction2,

@@ -15,8 +15,7 @@ function(){
          satellites nocturnes \u00e0 tr\u00e8s haute r\u00e9solution</strong>\"</a> (<i>POLLUM: Tool for the definition 
          of a dark infrastructure from very high-resolution night-time satellite images</i>) 
          funded by the Occitanie region and led by La Telescop and INRAE Montpellier, and with the article "Planning sustainable lighting for biodiversity and society" ([1]). 
-         The objective is to develop and evaluate a methodology for identifying the 
-         \"<strong>Trame noire</strong>\" (<i>Dark infrastructure</i>). To this end, three analyses were carried out: 
+         The objective is to develop a spatial analysis to find the best lighting compromises for biodiversity and society in the Montpellier Metropolitan Area. To this end, three analyses were carried out: 
          analysis of (i) light pollution and (ii) ecological stakes, led by La Telescop supported by 
          three naturalist associations (OPIE, LPO and Groupe de Chiropt\u00e8re du Languedoc Roussillon),
          and (iii) an analysis of social acceptability of mitigation measures coordinated by INRAE 
@@ -60,7 +59,7 @@ function(){
      Biodiversity reservoirs for bats (Rhinolophus spp and Myotis spp) cannot be visualized either, due to data confidentiality. 
      Additionally, this tab provides global indicators of ecological stakes. 
           The "overall score" is derived from the combination of ecological stakes without light pollution (high or moderate),
-          functionality loss of potential in reservoirs and dispersion areas (high, moderate, or low), and the number of affected species groups 
+          connectivity loss of potential in reservoirs and dispersion areas (high, moderate, or low), and the number of affected species groups 
           (from 1 to 2 or from 3 to 6). "Priority areas for light pollution mitigation policies" corresponds 
           to the same indicator allocated to the relevant light-emitting point (Section V.C.1 of [2]).</li>
            </p>
