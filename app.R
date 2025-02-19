@@ -133,7 +133,7 @@ ui <- bootstrapPage(
                  )
              )),
     # Light pollution indicators
-    tabPanel(HTML('<span style="font-size:100%;color:white;font-weight:normal;">Light pollution indicator</span></a>'),
+    tabPanel(HTML('<span style="font-size:100%;color:white;font-weight:normal;">Light pollution indicators</span></a>'),
              
              tags$head(
                includeCSS("styles.css"), tags$link(rel = "icon", type = "image/png", href = "starry_sky.jpg")
@@ -257,7 +257,7 @@ server <- function(input, output, session) {
                             NA),
                "Rhinolophus" = c("Impact of light pollution on dispersion according to ecological stakes",
                                  NA),
-               "global" = c("Overall score", 
+               "global" = c("Global score", 
                             "Priority areas for light pollution mitigation policies")) %>%
     gather(species, variable, Nightjar:global) %>%
     filter(!is.na(variable))
@@ -278,14 +278,14 @@ server <- function(input, output, session) {
   
   map1 <- reactive({
     
-    df_functionality_map3_nightjar <- df_map_species %>%
+    df_connectivity_map3_nightjar <- df_map_species %>%
       filter(species == "Nightjar", 
              type == "priority23",
              priority == "3") %>%
       mutate(legend = factor(legend, levels = c("Strong loss of connectivity", "Moderate loss of connectivity")))
     
     
-    df_functionality_map2_nightjar <- df_map_species %>%
+    df_connectivity_map2_nightjar <- df_map_species %>%
       filter(species == "Nightjar", 
              type == "priority23",
              priority == "2") %>%
@@ -293,37 +293,37 @@ server <- function(input, output, session) {
     
     
     pal3 <- colorFactor(c("#092e6a", "#3b97c8"), 
-                        domain = df_functionality_map3_nightjar[["indicator"]])
+                        domain = df_connectivity_map3_nightjar[["indicator"]])
     
     pal33 <- colorFactor(c("#092e6a", "#3b97c8"), 
-                         domain = df_functionality_map3_nightjar[["legend"]])
+                         domain = df_connectivity_map3_nightjar[["legend"]])
     
     pal2 <- colorFactor(c("#b31700", "#ef6547"), 
-                        domain =  df_functionality_map2_nightjar[["indicator"]])
+                        domain =  df_connectivity_map2_nightjar[["indicator"]])
     
     pal22 <- colorFactor(c("#b31700", "#ef6547"), 
-                         domain = df_functionality_map2_nightjar[["legend"]])
+                         domain = df_connectivity_map2_nightjar[["legend"]])
     
     labels2 <- sprintf(
       paste0("<strong> Nightjar </strong><br/>%s<br/>%s"),
       "Areas with high ecological stakes due to light pollution",
-      paste0(df_functionality_map2_nightjar[["legend"]], " due to light pollution")
+      paste0(df_connectivity_map2_nightjar[["legend"]], " due to light pollution")
     ) %>% lapply(htmltools::HTML)
     
     labels3 <- sprintf(
       paste0("<strong> Nightjar </strong><br/>%s<br/>%s"),
       "Areas with moderate ecological stakes due to light pollution",
-      paste0(df_functionality_map3_nightjar[["legend"]], " due to light pollution")
+      paste0(df_connectivity_map3_nightjar[["legend"]], " due to light pollution")
     ) %>% lapply(htmltools::HTML)
     
     map2 <- leaflet() %>%
       
       addProviderTiles(providers$CartoDB.Positron) %>%
       
-      addPolygons(data = df_functionality_map2_nightjar,
+      addPolygons(data = df_connectivity_map2_nightjar,
                   color = "#ffffff00", weight = 1, smoothFactor = 0.5,
                   opacity = 1, fillOpacity = 0.7,
-                  fillColor = ~pal2(df_functionality_map2_nightjar[["indicator"]]),
+                  fillColor = ~pal2(df_connectivity_map2_nightjar[["indicator"]]),
                   highlightOptions = highlightOptions(color = "grey", weight = 1,
                                                       bringToFront = TRUE),
                   label = labels2,
@@ -332,10 +332,10 @@ server <- function(input, output, session) {
                     textsize = "15px",
                     direction = "auto")) %>%
       
-      addPolygons(data = df_functionality_map3_nightjar,
+      addPolygons(data = df_connectivity_map3_nightjar,
                   color = "#ffffff00", weight = 1, smoothFactor = 0.5,
                   opacity = 1, fillOpacity = 0.7,
-                  fillColor = ~pal3(df_functionality_map3_nightjar[["indicator"]]),
+                  fillColor = ~pal3(df_connectivity_map3_nightjar[["indicator"]]),
                   highlightOptions = highlightOptions(color = "grey", weight = 1,
                                                       bringToFront = TRUE),
                   label = labels3,
@@ -344,7 +344,7 @@ server <- function(input, output, session) {
                     textsize = "15px",
                     direction = "auto")) %>%
       
-      addLegend("bottomleft", pal = pal33, values = df_functionality_map3_nightjar[["legend"]],
+      addLegend("bottomleft", pal = pal33, values = df_connectivity_map3_nightjar[["legend"]],
                 #title = "<strong style='font-weight:normal'>Areas with moderate ecological stakes without light pollution</strong><br>",
                 title = HTML("
                   <div style='width: 380px;'>
@@ -354,7 +354,7 @@ server <- function(input, output, session) {
                 opacity = 1
       ) %>%
       
-      addLegend("bottomleft", pal = pal22, values = df_functionality_map2_nightjar[["legend"]],
+      addLegend("bottomleft", pal = pal22, values = df_connectivity_map2_nightjar[["legend"]],
                 #title = paste0("Impact of light pollution on dispersion (Nightjar) <br> <strong style='font-weight:normal'>Areas with high ecological stakes without light pollution</strong><br>"),
                 title = HTML("
                   <div style='width: 380px;'>
@@ -375,7 +375,7 @@ server <- function(input, output, session) {
     indicateur_ecolo_abreviation <- switch(input$indicateur_ecolo,
                                            "Impact of light pollution on dispersion according to ecological stakes" = "priority23",
                                            "Biodiversity reservoirs" = "rb",
-                                           "Overall score" = "note",
+                                           "Global score" = "note",
                                            "Priority areas for light pollution mitigation policies" = "prio2_lighted_note")
     
     dataset <- df_map_species %>%
@@ -391,53 +391,53 @@ server <- function(input, output, session) {
     indicateur_ecolo_abreviation <- switch(input$indicateur_ecolo,
                                            "Impact of light pollution on dispersion according to ecological stakes" = "priority23",
                                            "Biodiversity reservoirs" = "rb",
-                                           "Overall score" = "note",
+                                           "Global score" = "note",
                                            "Priority areas for light pollution mitigation policies" = "prio2_lighted_note")
     
     if(indicateur_ecolo_abreviation == "priority23"){
       
-      df_functionality_map3 <- df_map1() %>%
+      df_connectivity_map3 <- df_map1() %>%
         filter(priority == "3") %>%
         mutate(legend = factor(legend, levels = c("Strong loss of connectivity", "Moderate loss of connectivity")))
       
       
-      df_functionality_map2 <- df_map1() %>%
+      df_connectivity_map2 <- df_map1() %>%
         filter(priority == "2") %>%
         mutate(legend = factor(legend, levels = c("Strong loss of connectivity", "Moderate loss of connectivity")))
       
       
       pal3 <- colorFactor(c("#092e6a", "#3b97c8"), 
-                          domain = df_functionality_map3[["indicator"]])
+                          domain = df_connectivity_map3[["indicator"]])
       
       pal33 <- colorFactor(c("#092e6a", "#3b97c8"), 
-                           domain = df_functionality_map3[["legend"]])
+                           domain = df_connectivity_map3[["legend"]])
       
       pal2 <- colorFactor(c("#b31700", "#ef6547"), 
-                          domain =  df_functionality_map2[["indicator"]])
+                          domain =  df_connectivity_map2[["indicator"]])
       
       pal22 <- colorFactor(c("#b31700", "#ef6547"), 
-                           domain = df_functionality_map2[["legend"]])
+                           domain = df_connectivity_map2[["legend"]])
       
       labels2 <- sprintf(
         paste0("<strong>", as.character(input$famille_espece), "</strong><br/>%s<br/>%s"),
         "Areas with high ecological stakes due to light pollution",
-        paste0(df_functionality_map2[["legend"]], " due to light pollution")
+        paste0(df_connectivity_map2[["legend"]], " due to light pollution")
       ) %>% lapply(htmltools::HTML)
       
       labels3 <- sprintf(
         paste0("<strong>", as.character(input$famille_espece), "</strong><br/>%s<br/>%s"),
         "Areas with moderate ecological stakes due to light pollution",
-        paste0(df_functionality_map3[["legend"]], " due to light pollution")
+        paste0(df_connectivity_map3[["legend"]], " due to light pollution")
       ) %>% lapply(htmltools::HTML)
       
       map2 <- leaflet() %>%
         
         addProviderTiles(providers$CartoDB.Positron) %>%
         
-        addPolygons(data = df_functionality_map2,
+        addPolygons(data = df_connectivity_map2,
                     color = "#ffffff00", weight = 1, smoothFactor = 0.5,
                     opacity = 1, fillOpacity = 0.7,
-                    fillColor = ~pal2(df_functionality_map2[["indicator"]]),
+                    fillColor = ~pal2(df_connectivity_map2[["indicator"]]),
                     highlightOptions = highlightOptions(color = "grey", weight = 1,
                                                         bringToFront = TRUE),
                     label = labels2,
@@ -446,10 +446,10 @@ server <- function(input, output, session) {
                       textsize = "15px",
                       direction = "auto")) %>%
         
-        addPolygons(data = df_functionality_map3,
+        addPolygons(data = df_connectivity_map3,
                     color = "#ffffff00", weight = 1, smoothFactor = 0.5,
                     opacity = 1, fillOpacity = 0.7,
-                    fillColor = ~pal3(df_functionality_map3[["indicator"]]),
+                    fillColor = ~pal3(df_connectivity_map3[["indicator"]]),
                     highlightOptions = highlightOptions(color = "grey", weight = 1,
                                                         bringToFront = TRUE),
                     label = labels3,
@@ -458,7 +458,7 @@ server <- function(input, output, session) {
                       textsize = "15px",
                       direction = "auto")) %>%
         
-        addLegend("bottomleft", pal = pal33, values = df_functionality_map3[["legend"]],
+        addLegend("bottomleft", pal = pal33, values = df_connectivity_map3[["legend"]],
                   #title = "<strong style='font-weight:normal'>Areas with moderate ecological stakes without light pollution</strong><br>",
                   title = HTML("
                   <div style='width: 380px;'>
@@ -468,7 +468,7 @@ server <- function(input, output, session) {
                   opacity = 1
         )%>%
         
-        addLegend("bottomleft", pal = pal22, values = df_functionality_map2[["legend"]],
+        addLegend("bottomleft", pal = pal22, values = df_connectivity_map2[["legend"]],
                   #title = paste0("Impact of light pollution on dispersion (", as.character(input$famille_espece), ") <br> <strong style='font-weight:normal'>Areas with high ecological stakes without light pollution</strong><br>"),
                   title = HTML(
                     paste0("<div style='width: 380px;'>",
@@ -540,17 +540,17 @@ server <- function(input, output, session) {
       labels2 <- switch(indicateur_ecolo_abreviation, 
                         "note" = sprintf(
                           "<strong>%s</strong><br/>%s<br/>%s<br/>%s",
-                          "Overall score", 
+                          "Global score", 
                           paste0(ifelse(df_map1()$priority %in% c("2"), "High ecological stakes without light pollution", "Moderate ecological stakes without light pollution")), 
-                          paste0(df_map1()$lose_functionality, " loss of connectivity"),
+                          paste0(df_map1()$lose_connectivity, " loss of connectivity"),
                           paste0(df_map1()$impacted_species, " impacted groups of species")
                         ) %>% lapply(htmltools::HTML), 
                         
                         "prio2_lighted_note" = sprintf(
                           "<strong>%s</strong><br/>%s<br/>%s<br/>%s",
-                          "Overall score", 
+                          "Global score", 
                           paste0(ifelse(df_map1()$priority %in% c("2"), "High ecological stakes without light pollution", "Moderate ecological stakes without light pollution")), 
-                          paste0(df_map1()$lose_functionality, " loss of connectivity"),
+                          paste0(df_map1()$lose_connectivity, " loss of connectivity"),
                           paste0(df_map1()$impacted_species, " impacted groups of species")
                         ) %>% lapply(htmltools::HTML))
       
@@ -559,7 +559,7 @@ server <- function(input, output, session) {
                       "prio2_lighted_note" = "legend_map_light")
       
       title <- switch(indicateur_ecolo_abreviation,
-                      "note" = "Overall score",
+                      "note" = "Global score",
                       "prio2_lighted_note" = "Priority areas for light pollution mitigation policies")
       
       
@@ -693,7 +693,7 @@ server <- function(input, output, session) {
                                       "#0285a1", 
                                       "#d7c659", "#99b35a", "#529c5a", "#03815c", 
                                       "#d9be01", "#9aab00", "#539600", "#007b00"),
-                         domain = bivariate_prio2$indicator_extinction1_44,
+                         domain = bivariate_prio2$indicator_extinction1,
                          na.color = "white")
     
     labels <- sprintf(
@@ -701,7 +701,7 @@ server <- function(input, output, session) {
       paste0(bivariate_prio2[["LIBCOM"]], ", ", bivariate_prio2[["LIBIRIS"]]), 
       round(bivariate_prio2$wtp_extinction1, 1),
       bivariate_prio2$acceptabilite_extinction1,
-      bivariate_prio2$lose_functionality, 
+      bivariate_prio2$lose_connectivity, 
       bivariate_prio2$impacted_species
     ) %>% lapply(htmltools::HTML)
     
@@ -720,7 +720,7 @@ server <- function(input, output, session) {
       
       addPolygons(data = bivariate_prio2,
                   color = "#ffffff00", 
-                  fillColor = ~pal44(bivariate_prio2$indicator_extinction1_44),
+                  fillColor = ~pal44(bivariate_prio2$indicator_extinction1),
                   highlightOptions = highlightOptions(color = "grey", weight = 1,
                                                       bringToFront = TRUE),
                   opacity = 1.0,  
@@ -755,14 +755,14 @@ server <- function(input, output, session) {
                                                      "#0285a1", 
                                                      "#d7c659", "#99b35a", "#529c5a", "#03815c", 
                                                      "#d9be01", "#9aab00", "#539600", "#007b00"),
-                                        domain = bivariate_prio2$indicator_extinction1_44,
+                                        domain = bivariate_prio2$indicator_extinction1,
                                         na.color = "white"), 
                       
                       "2" = colorFactor(palette = c( "#d3d3d3", "#94bdd4", "#51a5d6", "#0088d9", 
                                                      "#53a19f", "#0285a1", 
                                                      "#d7c659", "#99b35a", "#529c5a", "#03815c", 
                                                      "#d9be01", "#9aab00", "#539600", "#007b00"),
-                                        domain = bivariate_prio2$indicator_extinction2_44,
+                                        domain = bivariate_prio2$indicator_extinction2,
                                         na.color = "white")) 
       
       wtp <- switch(input$choix_indic_accept_synthese, 
@@ -770,8 +770,8 @@ server <- function(input, output, session) {
                     "2" = bivariate_prio2$wtp_extinction2)
       
       indicator <- switch(input$choix_indic_accept_synthese, 
-                          "1" = bivariate_prio2$indicator_extinction1_44, 
-                          "2" = bivariate_prio2$indicator_extinction2_44)
+                          "1" = bivariate_prio2$indicator_extinction1, 
+                          "2" = bivariate_prio2$indicator_extinction2)
       
       
       
@@ -781,7 +781,7 @@ server <- function(input, output, session) {
                          paste0(bivariate_prio2[["LIBCOM"]], ", ", bivariate_prio2[["LIBIRIS"]]), 
                          round(wtp, 1),
                          bivariate_prio2$acceptabilite_extinction1,
-                         bivariate_prio2$lose_functionality, 
+                         bivariate_prio2$lose_connectivity, 
                          bivariate_prio2$impacted_species
                        ) %>% lapply(htmltools::HTML), 
                        "2" = sprintf(
@@ -789,7 +789,7 @@ server <- function(input, output, session) {
                          paste0(bivariate_prio2[["LIBCOM"]], ", ", bivariate_prio2[["LIBIRIS"]]), 
                          round(wtp, 1),
                          bivariate_prio2$acceptabilite_extinction2,
-                         bivariate_prio2$lose_functionality, 
+                         bivariate_prio2$lose_connectivity, 
                          bivariate_prio2$impacted_species
                        ) %>% lapply(htmltools::HTML)
                        
@@ -838,14 +838,14 @@ server <- function(input, output, session) {
                                                      "#95b89e", "#53a19f", "#0285a1", 
                                                      "#d7c659", "#99b35a", "#529c5a", "#03815c",
                                                      "#d9be01", "#9aab00", "#539600", "#007b00"),
-                                        domain = bivariate_prio3$indicator_extinction1_44,
+                                        domain = bivariate_prio3$indicator_extinction1,
                                         na.color = "white"), 
                       
                       "2" = colorFactor(palette = c(  "#d3d3d3",  
                                                       "#d5ce9c", "#95b89e", "#53a19f", "#0285a1", 
                                                       "#d7c659", "#99b35a", "#529c5a", "#03815c",
                                                       "#d9be01", "#9aab00", "#539600", "#007b00"),
-                                        domain = bivariate_prio3$indicator_extinction2_44,
+                                        domain = bivariate_prio3$indicator_extinction2,
                                         na.color = "white")) 
       
       wtp <- switch(input$choix_indic_accept_synthese, 
@@ -854,8 +854,8 @@ server <- function(input, output, session) {
       
       
       indicator <- switch(input$choix_indic_accept_synthese, 
-                          "1" = bivariate_prio3$indicator_extinction1_44, 
-                          "2" = bivariate_prio3$indicator_extinction2_44)
+                          "1" = bivariate_prio3$indicator_extinction1, 
+                          "2" = bivariate_prio3$indicator_extinction2)
       
       
       labels <- switch(input$choix_indic_accept_synthese,
@@ -864,7 +864,7 @@ server <- function(input, output, session) {
                         paste0(bivariate_prio3[["LIBCOM"]], ", ", bivariate_prio3[["LIBIRIS"]]), 
                         round(wtp, 1),
                         bivariate_prio3$acceptabilite_extinction1,
-                        bivariate_prio3$lose_functionality, 
+                        bivariate_prio3$lose_connectivity, 
                         bivariate_prio3$impacted_species
                       ) %>% lapply(htmltools::HTML), 
                       "2" = sprintf(
@@ -872,7 +872,7 @@ server <- function(input, output, session) {
                         paste0(bivariate_prio3[["LIBCOM"]], ", ", bivariate_prio3[["LIBIRIS"]]), 
                         round(wtp, 1),
                         bivariate_prio3$acceptabilite_extinction2,
-                        bivariate_prio3$lose_functionality, 
+                        bivariate_prio3$lose_connectivity, 
                         bivariate_prio3$impacted_species
                       ) %>% lapply(htmltools::HTML))
                       
