@@ -58,7 +58,7 @@ function(){
      The application does not allow to visualize the impact of light pollution on amphibian dispersion, due to the small number of areas affected. 
      Biodiversity reservoirs for bats (Rhinolophus spp and Myotis spp) cannot be visualized either, due to data confidentiality. 
      Additionally, this tab provides global indicators of ecological stakes. 
-          The "overall score" is derived from the combination of ecological stakes without light pollution (high or moderate),
+          The "global score" is derived from the combination of ecological stakes without light pollution (high or moderate),
           connectivity loss of potential in reservoirs and dispersion areas (high, moderate, or low), and the number of affected species groups 
           (from 1 to 2 or from 3 to 6). "Priority areas for light pollution mitigation policies" corresponds 
           to the same indicator allocated to the relevant light-emitting point (Section V.C.1 of [2]).</li>
@@ -83,7 +83,7 @@ function(){
         <ul> <li style="font-size:120%;text-align:justify">The first tab \"<strong>Summary map</strong>\", displays a summary map of the ecological stakes and social acceptability of light pollution mitigation measures.
         It displays bivariate maps of the social acceptability score (either for 
         extinction from 1 a.m. to 5 a.m. or for extinction from 11 p.m. to 6 a.m.) 
-        and the previously described overall ecological indicators \"Priority areas for light pollution mitigation policies\", either for
+        and the previously described global ecological indicators \"Priority areas for light pollution mitigation policies\", either for
         high or moderate ecological stakes without light pollution (Figure 1).</li>
            </p>
       </div>  
@@ -94,7 +94,7 @@ function(){
   <div style="max-width:1000px; word-wrap:break-word;">
 
     <p style="text-align:justify">
-      Sarah Potin & Julie Chaurand (<a href="https://www.latelescop.fr/" target=_blank>La Telescop</a>)
+      Sarah Potin, Julie Chaurand & Vincent Delbar (<a href="https://www.latelescop.fr/" target=_blank>La Telescop</a>)
     </p>
 
       <p style="text-align:justify">
@@ -108,7 +108,7 @@ function(){
 		  <div style="max-width:1000px; word-wrap:break-word;">
 		     <p style="text-align:justify;">
      
-         [1] Tardieu L, Beaudet C, Potin S, Chaurand J, Mariton L, David M (submitted). Planning sustainable lighting for biodiversity and society.
+         [1] Tardieu L, Beaudet C, Potin S, Chaurand J, Mariton L, Delbar V, David M (submitted). Planning sustainable lighting for biodiversity and society.
          </p>
      
         <p style="text-align:justify;">
