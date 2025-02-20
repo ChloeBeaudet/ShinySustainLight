@@ -55,7 +55,7 @@ ui <- bootstrapPage(
                            choice = c("Extinction 1 a.m. - 5 a.m." = "1", 
                                       "Extinction 11 p.m. - 6 a.m." = "2")
                ),
-               selectInput("priority_synthese",
+               selectInput("baseline_ecological_stakes_synthese",
                            label = strong("Choose the indicator of ecological stakes"), 
                            choice = c("Priority areas for light pollution mitigation policies (high ecological stakes without light pollution)" = "2", 
                                       "Priority areas for light pollution mitigation policies (moderate ecological stakes without light pollution)" = "3"),  
@@ -123,7 +123,7 @@ ui <- bootstrapPage(
                    ),
                    selectInput("indicateur_ecolo",
                                label = strong("Choose an indicator"),
-                               choice = c("Impact of light pollution on dispersion according to ecological stakes" = "priority23",
+                               choice = c("Impact of light pollution on dispersion according to ecological stakes" = "impact_light_pollution",
                                           "Biodiversity reservoirs" = "rb")
                    ), 
                    
@@ -175,7 +175,7 @@ server <- function(input, output, session) {
   
   df_map0 <- reactive({
     
-    dataset <- df_pollum %>% filter(type == input$indicator_pollum)
+    dataset <- light_pollution_indicators %>% filter(type_variable == input$indicator_pollum)
     
     return(dataset)
     
@@ -278,17 +278,17 @@ server <- function(input, output, session) {
   
   map1 <- reactive({
     
-    df_connectivity_map3_nightjar <- df_map_species %>%
+    df_connectivity_map3_nightjar <- ecological_indicators %>%
       filter(species == "Nightjar", 
-             type == "priority23",
-             priority == "3") %>%
+             type_variable == "impact_light_pollution",
+             baseline_ecological_stakes == "3") %>%
       mutate(legend = factor(legend, levels = c("Strong loss of connectivity", "Moderate loss of connectivity")))
     
     
-    df_connectivity_map2_nightjar <- df_map_species %>%
+    df_connectivity_map2_nightjar <- ecological_indicators %>%
       filter(species == "Nightjar", 
-             type == "priority23",
-             priority == "2") %>%
+             type_variable == "impact_light_pollution",
+             baseline_ecological_stakes == "2") %>%
       mutate(legend = factor(legend, levels = c("Strong loss of connectivity", "Moderate loss of connectivity")))
     
     
@@ -373,14 +373,14 @@ server <- function(input, output, session) {
   df_map1 <- reactive({
     
     indicateur_ecolo_abreviation <- switch(input$indicateur_ecolo,
-                                           "Impact of light pollution on dispersion according to ecological stakes" = "priority23",
+                                           "Impact of light pollution on dispersion according to ecological stakes" = "impact_light_pollution",
                                            "Biodiversity reservoirs" = "rb",
-                                           "Global score" = "note",
-                                           "Priority areas for light pollution mitigation policies" = "prio2_lighted_note")
+                                           "Global score" = "global_score",
+                                           "Priority areas for light pollution mitigation policies" = "priority_area")
     
-    dataset <- df_map_species %>%
+    dataset <- ecological_indicators %>%
       filter(species == input$famille_espece, 
-             type == indicateur_ecolo_abreviation)
+             type_variable == indicateur_ecolo_abreviation)
     
     return(dataset)
     
@@ -389,20 +389,20 @@ server <- function(input, output, session) {
   observeEvent(input$go, {
     
     indicateur_ecolo_abreviation <- switch(input$indicateur_ecolo,
-                                           "Impact of light pollution on dispersion according to ecological stakes" = "priority23",
+                                           "Impact of light pollution on dispersion according to ecological stakes" = "impact_light_pollution",
                                            "Biodiversity reservoirs" = "rb",
-                                           "Global score" = "note",
-                                           "Priority areas for light pollution mitigation policies" = "prio2_lighted_note")
+                                           "Global score" = "global_score",
+                                           "Priority areas for light pollution mitigation policies" = "priority_area")
     
-    if(indicateur_ecolo_abreviation == "priority23"){
+    if(indicateur_ecolo_abreviation == "impact_light_pollution"){
       
       df_connectivity_map3 <- df_map1() %>%
-        filter(priority == "3") %>%
+        filter(baseline_ecological_stakes == "3") %>%
         mutate(legend = factor(legend, levels = c("Strong loss of connectivity", "Moderate loss of connectivity")))
       
       
       df_connectivity_map2 <- df_map1() %>%
-        filter(priority == "2") %>%
+        filter(baseline_ecological_stakes == "2") %>%
         mutate(legend = factor(legend, levels = c("Strong loss of connectivity", "Moderate loss of connectivity")))
       
       
@@ -530,37 +530,37 @@ server <- function(input, output, session) {
     
     else{
       palette_indicator <- switch(indicateur_ecolo_abreviation, 
-                                  "note" = c("#fde725", "#9ed93a", "#4ac26d", "#1fa288", "#277f8e", "#365c8d", "#46327f", "#440154"), 
-                                  "prio2_lighted_note" = c("#fde725", "#9ed93a", "#4ac26d", "#1fa288", "#277f8e", "#365c8d", "#46327f", "#440154"))
+                                  "global_score" = c("#fde725", "#9ed93a", "#4ac26d", "#1fa288", "#277f8e", "#365c8d", "#46327f", "#440154"), 
+                                  "priority_area" = c("#fde725", "#9ed93a", "#4ac26d", "#1fa288", "#277f8e", "#365c8d", "#46327f", "#440154"))
       
       pal2 <- colorFactor(palette_indicator, 
                           domain =  df_map1()$indicator)
       
       
       labels2 <- switch(indicateur_ecolo_abreviation, 
-                        "note" = sprintf(
+                        "global_score" = sprintf(
                           "<strong>%s</strong><br/>%s<br/>%s<br/>%s",
                           "Global score", 
-                          paste0(ifelse(df_map1()$priority %in% c("2"), "High ecological stakes without light pollution", "Moderate ecological stakes without light pollution")), 
-                          paste0(df_map1()$lose_connectivity, " loss of connectivity"),
+                          paste0(ifelse(df_map1()$baseline_ecological_stakes %in% c("2"), "High ecological stakes without light pollution", "Moderate ecological stakes without light pollution")), 
+                          paste0(df_map1()$loss_connectivity, " loss of connectivity"),
                           paste0(df_map1()$impacted_species, " impacted groups of species")
                         ) %>% lapply(htmltools::HTML), 
                         
-                        "prio2_lighted_note" = sprintf(
+                        "priority_area" = sprintf(
                           "<strong>%s</strong><br/>%s<br/>%s<br/>%s",
                           "Global score", 
-                          paste0(ifelse(df_map1()$priority %in% c("2"), "High ecological stakes without light pollution", "Moderate ecological stakes without light pollution")), 
-                          paste0(df_map1()$lose_connectivity, " loss of connectivity"),
+                          paste0(ifelse(df_map1()$baseline_ecological_stakes %in% c("2"), "High ecological stakes without light pollution", "Moderate ecological stakes without light pollution")), 
+                          paste0(df_map1()$loss_connectivity, " loss of connectivity"),
                           paste0(df_map1()$impacted_species, " impacted groups of species")
                         ) %>% lapply(htmltools::HTML))
       
       image <- switch(indicateur_ecolo_abreviation, 
-                      "note" = "legend_map_global", 
-                      "prio2_lighted_note" = "legend_map_light")
+                      "global_score" = "legend_map_global", 
+                      "priority_area" = "legend_map_light")
       
       title <- switch(indicateur_ecolo_abreviation,
-                      "note" = "Global score",
-                      "prio2_lighted_note" = "Priority areas for light pollution mitigation policies")
+                      "global_score" = "Global score",
+                      "priority_area" = "Priority areas for light pollution mitigation policies")
       
       
       
@@ -614,8 +614,8 @@ server <- function(input, output, session) {
                    "2" = c(-121, -20, -5, 5, 15, 30, 47))
     
     domain <- switch(input$choix_indic_accept, 
-                     "1" = df_wtp$acceptabilite_extinction1, 
-                     "2" = df_wtp$acceptabilite_extinction2)
+                     "1" = socio_eco_indicators$cat_acceptability_score_extinction1, 
+                     "2" = socio_eco_indicators$cat_acceptability_score_extinction2)
     
     pal2 <- colorBin(c("#d73027", "#fdae61", "#fffdbf", "#abd9e9", "#4575b4", "#323695"), 
                      bins = bins, 
@@ -626,19 +626,19 @@ server <- function(input, output, session) {
     labels <- switch(input$choix_indic_accept, 
                      "1" = sprintf(
                        "<strong>%s</strong><br/>Acceptation score: %g (%s)",
-                       paste0(df_wtp[["LIBCOM"]], ", ", df_wtp[["LIBIRIS"]]), round(df_wtp$wtp_extinction1, 1), 
-                       df_wtp$acceptabilite_extinction1
+                       paste0(socio_eco_indicators[["LIBCOM"]], ", ", socio_eco_indicators[["LIBIRIS"]]), round(socio_eco_indicators$acceptability_score_extinction1, 1), 
+                       socio_eco_indicators$cat_acceptability_score_extinction1
                      ) %>% lapply(htmltools::HTML), 
                      
                      "2" = sprintf(
                        "<strong>%s</strong><br/>Acceptation score: %g (%s)",
-                       paste0(df_wtp[["LIBCOM"]], ", ", df_wtp[["LIBIRIS"]]), round(df_wtp$wtp_extinction2, 1), 
-                       df_wtp$acceptabilite_extinction2
+                       paste0(socio_eco_indicators[["LIBCOM"]], ", ", socio_eco_indicators[["LIBIRIS"]]), round(socio_eco_indicators$acceptability_score_extinction2, 1), 
+                       socio_eco_indicators$cat_acceptability_score_extinction2
                      ) %>% lapply(htmltools::HTML))
     
     chloropeth <- switch(input$choix_indic_accept, 
-                         "1" = df_wtp$wtp_extinction1, 
-                         "2" = df_wtp$wtp_extinction2)
+                         "1" = socio_eco_indicators$acceptability_score_extinction1, 
+                         "2" = socio_eco_indicators$acceptability_score_extinction2)
     
     title <- switch(input$choix_indic_accept, 
                     "1" = "Social acceptation for public</br>lighting extinction from 1 a.m. to 5 a.m.", 
@@ -658,7 +658,7 @@ server <- function(input, output, session) {
                   #                                     bringToFront = TRUE)
       ) %>%
       
-      addPolygons(data = df_wtp, 
+      addPolygons(data = socio_eco_indicators, 
                   color = "darkgrey", weight = 1, smoothFactor = 0.5,
                   opacity = 1.0, fillOpacity = 0.9,
                   fillColor = ~pal2(chloropeth),
@@ -693,16 +693,16 @@ server <- function(input, output, session) {
                                       "#0285a1", 
                                       "#d7c659", "#99b35a", "#529c5a", "#03815c", 
                                       "#d9be01", "#9aab00", "#539600", "#007b00"),
-                         domain = bivariate_prio2$indicator_extinction1,
+                         domain = summary_indicators_high$indicator_extinction1,
                          na.color = "white")
     
     labels <- sprintf(
       "<strong>%s</strong><br/>Acceptation score : %g (%s)<br/>%s loss of connectivity <br/> <strong>%s</strong> groups of impacted species",
-      paste0(bivariate_prio2[["LIBCOM"]], ", ", bivariate_prio2[["LIBIRIS"]]), 
-      round(bivariate_prio2$wtp_extinction1, 1),
-      bivariate_prio2$acceptabilite_extinction1,
-      bivariate_prio2$lose_connectivity, 
-      bivariate_prio2$impacted_species
+      paste0(summary_indicators_high[["LIBCOM"]], ", ", summary_indicators_high[["LIBIRIS"]]), 
+      round(summary_indicators_high$acceptability_score_extinction1, 1),
+      summary_indicators_high$cat_acceptability_score_extinction1,
+      summary_indicators_high$loss_connectivity, 
+      summary_indicators_high$impacted_species
     ) %>% lapply(htmltools::HTML)
     
     map4 <- leaflet() %>%
@@ -718,9 +718,9 @@ server <- function(input, output, session) {
                   #                                     bringToFront = TRUE) 
       ) %>%
       
-      addPolygons(data = bivariate_prio2,
+      addPolygons(data = summary_indicators_high,
                   color = "#ffffff00", 
-                  fillColor = ~pal44(bivariate_prio2$indicator_extinction1),
+                  fillColor = ~pal44(summary_indicators_high$indicator_extinction1),
                   highlightOptions = highlightOptions(color = "grey", weight = 1,
                                                       bringToFront = TRUE),
                   opacity = 1.0,  
@@ -748,49 +748,49 @@ server <- function(input, output, session) {
   observeEvent(input$go3, {
     
     
-    if(input$priority_synthese == "2"){
+    if(input$baseline_ecological_stakes_synthese == "2"){
       
       pal44 <- switch(input$choix_indic_accept_synthese, 
                       "1" = colorFactor(palette = c( "#94bdd4", "#51a5d6", "#0088d9", 
                                                      "#0285a1", 
                                                      "#d7c659", "#99b35a", "#529c5a", "#03815c", 
                                                      "#d9be01", "#9aab00", "#539600", "#007b00"),
-                                        domain = bivariate_prio2$indicator_extinction1,
+                                        domain = summary_indicators_high$indicator_extinction1,
                                         na.color = "white"), 
                       
                       "2" = colorFactor(palette = c( "#d3d3d3", "#94bdd4", "#51a5d6", "#0088d9", 
                                                      "#53a19f", "#0285a1", 
                                                      "#d7c659", "#99b35a", "#529c5a", "#03815c", 
                                                      "#d9be01", "#9aab00", "#539600", "#007b00"),
-                                        domain = bivariate_prio2$indicator_extinction2,
+                                        domain = summary_indicators_high$indicator_extinction2,
                                         na.color = "white")) 
       
       wtp <- switch(input$choix_indic_accept_synthese, 
-                    "1" = bivariate_prio2$wtp_extinction1, 
-                    "2" = bivariate_prio2$wtp_extinction2)
+                    "1" = summary_indicators_high$acceptability_score_extinction1, 
+                    "2" = summary_indicators_high$acceptability_score_extinction2)
       
       indicator <- switch(input$choix_indic_accept_synthese, 
-                          "1" = bivariate_prio2$indicator_extinction1, 
-                          "2" = bivariate_prio2$indicator_extinction2)
+                          "1" = summary_indicators_high$indicator_extinction1, 
+                          "2" = summary_indicators_high$indicator_extinction2)
       
       
       
       labels <- switch(input$choix_indic_accept_synthese, 
                        "1" = sprintf(
                          "<strong>%s</strong><br/>Acceptation score : %g (%s)<br/>%s loss of connectivity <br/> <strong>%s</strong> groups of impacted species",
-                         paste0(bivariate_prio2[["LIBCOM"]], ", ", bivariate_prio2[["LIBIRIS"]]), 
+                         paste0(summary_indicators_high[["LIBCOM"]], ", ", summary_indicators_high[["LIBIRIS"]]), 
                          round(wtp, 1),
-                         bivariate_prio2$acceptabilite_extinction1,
-                         bivariate_prio2$lose_connectivity, 
-                         bivariate_prio2$impacted_species
+                         summary_indicators_high$cat_acceptability_score_extinction1,
+                         summary_indicators_high$loss_connectivity, 
+                         summary_indicators_high$impacted_species
                        ) %>% lapply(htmltools::HTML), 
                        "2" = sprintf(
                          "<strong>%s</strong><br/>Acceptation score : %g (%s)<br/>%s loss of connectivity <br/> <strong>%s</strong> groups of impacted species",
-                         paste0(bivariate_prio2[["LIBCOM"]], ", ", bivariate_prio2[["LIBIRIS"]]), 
+                         paste0(summary_indicators_high[["LIBCOM"]], ", ", summary_indicators_high[["LIBIRIS"]]), 
                          round(wtp, 1),
-                         bivariate_prio2$acceptabilite_extinction2,
-                         bivariate_prio2$lose_connectivity, 
-                         bivariate_prio2$impacted_species
+                         summary_indicators_high$cat_acceptability_score_extinction2,
+                         summary_indicators_high$loss_connectivity, 
+                         summary_indicators_high$impacted_species
                        ) %>% lapply(htmltools::HTML)
                        
                        )
@@ -809,7 +809,7 @@ server <- function(input, output, session) {
                     #                                     bringToFront = TRUE) 
         ) %>%
         
-        addPolygons(data = bivariate_prio2,
+        addPolygons(data = summary_indicators_high,
                     color = "#ffffff00", 
                     fillColor = ~pal44(indicator),
                     highlightOptions = highlightOptions(color = "grey", weight = 1,
@@ -838,42 +838,42 @@ server <- function(input, output, session) {
                                                      "#95b89e", "#53a19f", "#0285a1", 
                                                      "#d7c659", "#99b35a", "#529c5a", "#03815c",
                                                      "#d9be01", "#9aab00", "#539600", "#007b00"),
-                                        domain = bivariate_prio3$indicator_extinction1,
+                                        domain = summary_indicators_moderate$indicator_extinction1,
                                         na.color = "white"), 
                       
                       "2" = colorFactor(palette = c(  "#d3d3d3",  
                                                       "#d5ce9c", "#95b89e", "#53a19f", "#0285a1", 
                                                       "#d7c659", "#99b35a", "#529c5a", "#03815c",
                                                       "#d9be01", "#9aab00", "#539600", "#007b00"),
-                                        domain = bivariate_prio3$indicator_extinction2,
+                                        domain = summary_indicators_moderate$indicator_extinction2,
                                         na.color = "white")) 
       
       wtp <- switch(input$choix_indic_accept_synthese, 
-                    "1" = bivariate_prio3$wtp_extinction1, 
-                    "2" = bivariate_prio3$wtp_extinction2)
+                    "1" = summary_indicators_moderate$acceptability_score_extinction1, 
+                    "2" = summary_indicators_moderate$acceptability_score_extinction2)
       
       
       indicator <- switch(input$choix_indic_accept_synthese, 
-                          "1" = bivariate_prio3$indicator_extinction1, 
-                          "2" = bivariate_prio3$indicator_extinction2)
+                          "1" = summary_indicators_moderate$indicator_extinction1, 
+                          "2" = summary_indicators_moderate$indicator_extinction2)
       
       
       labels <- switch(input$choix_indic_accept_synthese,
                       "1" = sprintf(
                         "<strong>%s</strong><br/>Acceptation score : %g (%s)<br/>%s loss of connectivity <br/> <strong>%s</strong> groups of impacted species",
-                        paste0(bivariate_prio3[["LIBCOM"]], ", ", bivariate_prio3[["LIBIRIS"]]), 
+                        paste0(summary_indicators_moderate[["LIBCOM"]], ", ", summary_indicators_moderate[["LIBIRIS"]]), 
                         round(wtp, 1),
-                        bivariate_prio3$acceptabilite_extinction1,
-                        bivariate_prio3$lose_connectivity, 
-                        bivariate_prio3$impacted_species
+                        summary_indicators_moderate$cat_acceptability_score_extinction1,
+                        summary_indicators_moderate$loss_connectivity, 
+                        summary_indicators_moderate$impacted_species
                       ) %>% lapply(htmltools::HTML), 
                       "2" = sprintf(
                         "<strong>%s</strong><br/>Acceptation score : %g (%s)<br/>%s loss of connectivity <br/> <strong>%s</strong> groups of impacted species",
-                        paste0(bivariate_prio3[["LIBCOM"]], ", ", bivariate_prio3[["LIBIRIS"]]), 
+                        paste0(summary_indicators_moderate[["LIBCOM"]], ", ", summary_indicators_moderate[["LIBIRIS"]]), 
                         round(wtp, 1),
-                        bivariate_prio3$acceptabilite_extinction2,
-                        bivariate_prio3$lose_connectivity, 
-                        bivariate_prio3$impacted_species
+                        summary_indicators_moderate$cat_acceptability_score_extinction2,
+                        summary_indicators_moderate$loss_connectivity, 
+                        summary_indicators_moderate$impacted_species
                       ) %>% lapply(htmltools::HTML))
                       
       
@@ -888,7 +888,7 @@ server <- function(input, output, session) {
                     fillOpacity = 0.2
         ) %>%
         
-        addPolygons(data = bivariate_prio3,
+        addPolygons(data = summary_indicators_moderate,
                     color = "#ffffff00", 
                     fillColor = ~pal44(indicator),
                     highlightOptions = highlightOptions(color = "grey", weight = 1,
