@@ -207,7 +207,7 @@ server <- function(input, output, session) {
       addProviderTiles(providers$CartoDB.Positron) %>%
       
       
-      addPolygons(data = df_mmm_shp,
+      addPolygons(data = base_map_mmm,
                   color = "grey", weight = 1, smoothFactor = 0.5,
                   opacity = 1.0,
                   fillColor = "white",
@@ -649,7 +649,7 @@ server <- function(input, output, session) {
       addProviderTiles(providers$CartoDB.Positron) %>%
       
       
-      addPolygons(data = df_mmm_shp,
+      addPolygons(data = base_map_mmm,
                   color = "black", weight = 1, smoothFactor = 0.5,
                   opacity = 1.0,
                   fillColor = "white",
@@ -709,7 +709,7 @@ server <- function(input, output, session) {
       
       addProviderTiles(providers$CartoDB.Positron) %>%
       
-      addPolygons(data = df_mmm_shp,
+      addPolygons(data = base_map_mmm,
                   color = "#444444", weight = 1, smoothFactor = 0.5,
                   opacity = 1.0, 
                   fillColor = "white", 
@@ -800,7 +800,7 @@ server <- function(input, output, session) {
         
         addProviderTiles(providers$CartoDB.Positron) %>%
         
-        addPolygons(data = df_mmm_shp,
+        addPolygons(data = base_map_mmm,
                     color = "#444444", weight = 1, smoothFactor = 0.5,
                     opacity = 1.0, 
                     fillColor = "white", 
@@ -881,7 +881,7 @@ server <- function(input, output, session) {
         
         addProviderTiles(providers$CartoDB.Positron) %>%
         
-        addPolygons(data = df_mmm_shp,
+        addPolygons(data = base_map_mmm,
                     color = "#444444", weight = 1, smoothFactor = 0.5,
                     opacity = 1.0, 
                     fillColor = "white", 
